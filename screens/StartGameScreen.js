@@ -1,7 +1,29 @@
-import { TextInput, View, StyleSheet } from "react-native";
-import Primarybutton from "../components/Primarybutton";
+import { useState } from "react";
+import { TextInput, View, StyleSheet, Alert } from "react-native";
+import Primarybutton from "../components/ui/Primarybutton";
+import Colors from "../constants/colors";
 
-function StartGameScreen() {
+function StartGameScreen({ pickedNumberHandler }) {
+  const [enteredNumber, setEnteredNumber] = useState("");
+
+  function numberInputHandler(enteredtext) {
+    setEnteredNumber(enteredtext);
+  }
+
+  function resetInputHandler() {
+    setEnteredNumber("");
+  }
+  function confirmInputHandler() {
+    const chosenNumber = parseInt(enteredNumber);
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+      Alert.alert("Invalid number!", "number had to be number between 1 and 99.", [
+        { text: "Okay", style: "destructive", onPress: resetInputHandler },
+      ]);
+      return;
+    }
+    pickedNumberHandler(enteredNumber);
+  }
+
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -10,13 +32,15 @@ function StartGameScreen() {
         keyboardType="number-pad"
         autoCapitalize="none"
         autoCorrect={false}
+        value={enteredNumber}
+        onChangeText={numberInputHandler}
       />
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonContainer}>
-          <Primarybutton>Reset</Primarybutton>
+          <Primarybutton onPress={resetInputHandler}>Reset</Primarybutton>
         </View>
         <View style={styles.buttonContainer}>
-          <Primarybutton>Confirm</Primarybutton>
+          <Primarybutton onPress={confirmInputHandler}>Confirm</Primarybutton>
         </View>
       </View>
     </View>
@@ -31,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     marginTop: 100,
-    backgroundColor: "#3b021f",
+    backgroundColor: Colors.primary800,
     marginHorizontal: 24,
     borderRadius: 8,
     elevation: 4,
@@ -46,9 +70,9 @@ const styles = StyleSheet.create({
   numberInput: {
     height: 50,
     fontSize: 32,
-    borderBottomColor: "#ddb52f",
+    borderBottomColor: Colors.accent500,
     borderBottomWidth: 2,
-    color: "#ddb52f",
+    color: Colors.accent500,
     marginVertical: 8,
     fontWeight: "bold",
     width: 50,
